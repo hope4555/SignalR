@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipelines;
 using System.Net;
@@ -83,6 +84,9 @@ namespace Microsoft.AspNetCore.Sockets.Client
                     }
                     else
                     {
+                        var stream = response.Content.ReadAsStreamAsync();
+                        var messages = await ReadMessages(stream);
+
                         var ms = new MemoryStream();
                         await response.Content.CopyToAsync(ms);
                         var message = new Message(ms.ToArray(), MessageType.Text);
@@ -111,6 +115,12 @@ namespace Microsoft.AspNetCore.Sockets.Client
                 // Make sure the send loop is terminated
                 _transportCts.Cancel();
             }
+        }
+
+        private Task<IList<Message>> ReadMessages(Stream stream)
+        {
+            var messages = new List<Message>();
+            Start here next
         }
 
         private async Task SendMessages(Uri sendUrl, CancellationToken cancellationToken)
