@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Sockets.Transports
     public class LongPollingTransport : IHttpTransport
     {
         // REVIEW: This size?
-        private const int MaxBufferSize = 4096;
+        internal const int MaxBufferSize = 4096;
 
         public static readonly string Name = "longPolling";
         private readonly ReadableChannel<Message> _application;
@@ -56,6 +56,7 @@ namespace Microsoft.AspNetCore.Sockets.Transports
                     if(!MessageFormatter.TryFormatMessage(message, buffer, messageFormat, out var written))
                     {
                         // We need to expand the buffer
+                        // REVIEW: I'm not sure I fully understand the "right" pattern here...
                         alloc.Ensure(MaxBufferSize);
                         buffer = alloc.Memory.Span;
 
