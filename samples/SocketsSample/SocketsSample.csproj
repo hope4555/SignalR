@@ -21,7 +21,9 @@
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.2.0-*" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.2.0-*" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.2.0-*" />
     <PackageReference Include="Google.Protobuf" Version="3.1.0" />
   </ItemGroup>
 
@@ -31,7 +33,7 @@
       <SignalRClientTargetFolder>$(MSBuildProjectDirectory)/wwwroot/lib/signalr-client/</SignalRClientTargetFolder>
       <SignalRClientTargetPath>$(MSBuildProjectDirectory)/wwwroot/lib/signalr-client/signalr-client.js</SignalRClientTargetPath>
     </PropertyGroup>
-    <Copy Condition="Exists('$(SignalRClientDistPath)')" SourceFiles="$(SignalRClientDistPath)" DestinationFolder="$(SignalRClientTargetFolder)"/>
+    <Copy Condition="Exists('$(SignalRClientDistPath)')" SourceFiles="$(SignalRClientDistPath)" DestinationFolder="$(SignalRClientTargetFolder)" />
     <Exec Condition="!Exists('$(SignalRClientDistPath)')" Command="npm install" />
     <Exec Condition="!Exists('$(SignalRClientDistPath)')" Command="npm run gulp -- --gulpfile $(MSBuildProjectDirectory)/../../src/Microsoft.AspNetCore.SignalR.Client.TS/gulpfile.js bundle-client --bundleOutDir $(SignalRClientTargetFolder)" />
   </Target>
