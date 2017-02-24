@@ -3,16 +3,17 @@
   <Import Project="..\..\build\common.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1;net46</TargetFrameworks>
-
-    <!-- TODO remove when https://github.com/dotnet/sdk/issues/396 is resolved -->
-    <RuntimeIdentifier Condition=" '$(TargetFramework)' != 'netcoreapp1.1' ">win7-x64</RuntimeIdentifier>
+    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.SignalR\Microsoft.AspNetCore.SignalR.csproj" />
+    <!-- ExcludeRestorePackageImports prevents from trying to restore packages for this project reference -->
+    <ProjectReference
+      Condition="'$(ExcludeRestorePackageImports)' != 'True'"
+      Include="..\..\src\Microsoft.AspNetCore.SignalR.Client.TS\Microsoft.AspNetCore.SignalR.Client.TS.proj" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.2.0-*" />
@@ -20,26 +21,16 @@
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.2.0-*" />
   </ItemGroup>
 
-  <Target Name="NpmInstall">
-    <Exec Command="npm install" />
-  </Target>
-
-  <Target Name="CopyJasmine" BeforeTargets="BeforeBuild" DependsOnTargets="NpmInstall">
+  <!-- these targets relies on npm packages being restored when building the TS client -->
+  <Target Name="CopyRequiredArtifacts" BeforeTargets="AfterBuild">
       <ItemGroup>
-        <JasmineFiles Include="../../node_modules/jasmine-core/lib/jasmine-core/*.js" />
-        <JasmineFiles Include="../../node_modules/jasmine-core/lib/jasmine-core/*.css" />
+        <JasmineFiles Include="$(MSBuildProjectDirectory)../../node_modules/jasmine-core/lib/jasmine-core/*.js" />
+        <JasmineFiles Include="$(MSBuildProjectDirectory)../../node_modules/jasmine-core/lib/jasmine-core/*.css" />
       </ItemGroup>
       <Copy SourceFiles="@(JasmineFiles)" DestinationFolder="$(MSBuildProjectDirectory)/wwwroot/lib/jasmine" />
-  </Target>
 
-  <Target Name="BuildTSClient" BeforeTargets="BeforeBuild" DependsOnTargets="NpmInstall">
-    <PropertyGroup>
-      <SignalRClientDistPath>..\..\dist\browser\signalr-client.js</SignalRClientDistPath>
-      <SignalRClientTargetFolder>$(MSBuildProjectDirectory)/wwwroot/lib/signalr-client/</SignalRClientTargetFolder>
-      <SignalRClientTargetPath>$(MSBuildProjectDirectory)/wwwroot/lib/signalr-client/signalr-client.js</SignalRClientTargetPath>
-    </PropertyGroup>
-    <Copy Condition="Exists('$(SignalRClientDistPath)')" SourceFiles="$(SignalRClientDistPath)" DestinationFolder="$(SignalRClientTargetFolder)"/>
-    <Exec Condition="!Exists('$(SignalRClientDistPath)')" Command="npm run gulp -- --gulpfile $(MSBuildProjectDirectory)/../../src/Microsoft.AspNetCore.SignalR.Client.TS/gulpfile.js bundle-client --bundleOutDir $(SignalRClientTargetFolder)" />
+      <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\dist\browser\signalr-client.js"
+          DestinationFolder="$(MSBuildThisFileDirectory)wwwroot\lib\signalr-client"/>
   </Target>
 
 </Project>

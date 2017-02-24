@@ -16,6 +16,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.SignalR.Redis\Microsoft.AspNetCore.SignalR.Redis.csproj" />
+    <!-- ExcludeRestorePackageImports prevents from trying to restore packages for this project reference -->
+    <ProjectReference
+      Condition="'$(ExcludeRestorePackageImports)' != 'True'"
+      Include="..\..\src\Microsoft.AspNetCore.SignalR.Client.TS\Microsoft.AspNetCore.SignalR.Client.TS.proj" />
+
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.2.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.2.0-*" />
@@ -25,15 +30,9 @@
     <PackageReference Include="Google.Protobuf" Version="3.1.0" />
   </ItemGroup>
 
-  <Target Name="BuildTSClient" BeforeTargets="BeforeBuild">
-    <PropertyGroup>
-      <SignalRClientDistPath>..\..\dist\browser\signalr-client.js</SignalRClientDistPath>
-      <SignalRClientTargetFolder>$(MSBuildProjectDirectory)/wwwroot/lib/signalr-client/</SignalRClientTargetFolder>
-      <SignalRClientTargetPath>$(MSBuildProjectDirectory)/wwwroot/lib/signalr-client/signalr-client.js</SignalRClientTargetPath>
-    </PropertyGroup>
-    <Copy Condition="Exists('$(SignalRClientDistPath)')" SourceFiles="$(SignalRClientDistPath)" DestinationFolder="$(SignalRClientTargetFolder)"/>
-    <Exec Condition="!Exists('$(SignalRClientDistPath)')" Command="npm install" />
-    <Exec Condition="!Exists('$(SignalRClientDistPath)')" Command="npm run gulp -- --gulpfile $(MSBuildProjectDirectory)/../../src/Microsoft.AspNetCore.SignalR.Client.TS/gulpfile.js bundle-client --bundleOutDir $(SignalRClientTargetFolder)" />
+  <Target Name="CopyTSClient" BeforeTargets="AfterBuild">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\dist\browser\signalr-client.js"
+          DestinationFolder="$(MSBuildThisFileDirectory)wwwroot\lib\signalr-client" />
   </Target>
 
 </Project>

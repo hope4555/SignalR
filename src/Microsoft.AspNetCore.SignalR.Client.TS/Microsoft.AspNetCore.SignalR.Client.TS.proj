@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SignalRClientDistFolder>$(MSBuildThisFileDirectory)..\..\dist\</SignalRClientDistFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Inputs Include="*.ts;" />
+    <Outputs Include="@(Inputs -> '$(SignalRClientDistFolder)src\%(FileName).d.ts')" />
+    <Outputs Include="@(Inputs -> '$(SignalRClientDistFolder)src\%(FileName).js')" />
+    <Outputs Include="$(SignalRClientDistFolder)browser\signalr-client.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tsconfig.json" />
+  </ItemGroup>
+
+  <!-- Apparently these targets are expected when referencing this project from a csproj -->
+  <Target Name="GetTargetFrameworkProperties" />
+  <Target Name="GetNativeManifest" />
+  <Target Name="GetCopyToOutputDirectoryItems" />
+
+  <!-- this target relies on npm packages being restored manually or when running full build -->
+  <Target Name="BuildTSClient" Inputs="@(Inputs)" Outputs="@(Outputs)">
+    <Exec Command="npm run gulp -- --gulpfile $(MSBuildThisFileDirectory)gulpfile.js build-ts-client" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="BuildTSClient">
+  </Target>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(SignalRClientDistFolder)" />
+  </Target>
+
+  <Import Project="$(MSBuildThisFileDirectory)\..\..\build\repo.targets" />
+</Project>
+
