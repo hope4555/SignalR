@@ -15,10 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.SignalR\Microsoft.AspNetCore.SignalR.csproj" />
-    <!-- ExcludeRestorePackageImports prevents from trying to restore packages for this project reference -->
-    <ProjectReference
-      Condition="'$(ExcludeRestorePackageImports)' != 'True'"
-      Include="..\..\src\Microsoft.AspNetCore.SignalR.Client.TS\Microsoft.AspNetCore.SignalR.Client.TS.proj" />
+    <ProjectReference Include="..\..\src\Microsoft.AspNetCore.SignalR.Client.TS\Microsoft.AspNetCore.SignalR.Client.TS.csproj" />
   </ItemGroup>
 
   <ItemGroup>

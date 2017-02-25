@@ -16,10 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.SignalR.Redis\Microsoft.AspNetCore.SignalR.Redis.csproj" />
-    <!-- ExcludeRestorePackageImports prevents from trying to restore packages for this project reference -->
-    <ProjectReference
-      Condition="'$(ExcludeRestorePackageImports)' != 'True'"
-      Include="..\..\src\Microsoft.AspNetCore.SignalR.Client.TS\Microsoft.AspNetCore.SignalR.Client.TS.proj" />
+    <ProjectReference Include="..\..\src\Microsoft.AspNetCore.SignalR.Client.TS\Microsoft.AspNetCore.SignalR.Client.TS.csproj" />
 
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.2.0-*" />
